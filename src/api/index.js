@@ -1,35 +1,16 @@
-import { Router } from 'express';
+const app = require('express')();
+const { v4 } = require('uuid');
 
-export default () => {
-  const api = Router();
+app.get('/api', (req, res) => {
+    const path = `/api/item/${v4()}`;
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
+    res.end(`Hello! Go to item: <a href="${path}">${path}</a>`);
+});
 
-  api.get('/', (req, res) => {  
-  	res.json({api: true});
-  });
+app.get('/api/item/:slug', (req, res) => {
+    const { slug } = req.params;
+    res.end(`Item: ${slug}`);
+});
 
-  api.get('/api/:number', (req, res) => {
-    res.json({number: req.params.number});
-  });
-
-  api.get('/secrets', (req, res) => {
-    res.json([
-          {
-            "id": 1,
-            "name": "secret one",
-            "value": "1111"
-          },
-          {
-            "id": 2,
-              "name": "secret two",
-              "value": "2222"
-          },
-          {
-            "id": 3,
-              "name": "secret three",
-              "value": "3333"
-          }
-          ]);
-  });
-
-  return api;
-}
+module.exports = app;
